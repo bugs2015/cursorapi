@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   cursorweb2api:
-    image: ghcr.io/jhhgiyv/cursorweb2api:latest
+    image: ghcr.io/bugs2015/cursorweb2api:latest
     container_name: cursorweb2api
     ports:
       - "8000:8000"
