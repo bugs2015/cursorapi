@@ -3,7 +3,7 @@ version: '3.8'
 services:
   cursorweb2api:
     image: ghcr.io/bugs2015/cursorapi:latest
-    container_name: cursorweb2api
+    container_name: cursorapi
     ports:
       - "8000:8000"
     environment:
