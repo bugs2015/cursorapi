@@ -63,7 +63,14 @@ async def chat_completions(
 
 
 @app.get("/v1/models")
-async def list_models(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def list_models(
+    key: Optional[str] = None, 
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
+):
+    # 兼容处理：优先校验 key，如果没有 key 则校验 Authorization header
+    if (key != API_KEY) and (not credentials or credentials.credentials != API_KEY):
+        raise HTTPException(401, 'api key 错误')
+
     models = MODELS.split(',')
     model_list = []
 
