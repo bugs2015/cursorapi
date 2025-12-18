@@ -67,8 +67,20 @@ async def list_models(
     key: Optional[str] = None, 
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
 ):
-    # 兼容处理：优先校验 key，如果没有 key 则校验 Authorization header
-    if (key != API_KEY) and (not credentials or credentials.credentials != API_KEY):
+    # --- 调试代码开始 (调试完后可删除) ---
+    print(f"DEBUG: Config API_KEY=[{API_KEY}]")
+    print(f"DEBUG: Received Query Key=[{key}]")
+    print(f"DEBUG: Received Header Key=[{credentials.credentials if credentials else 'None'}]")
+    # --- 调试代码结束 ---
+
+    # 1. 检查 Query Param (URL中的key)
+    if key and key == API_KEY:
+        pass # 通过
+    # 2. 检查 Header (Authorization: Bearer xxx)
+    elif credentials and credentials.credentials == API_KEY:
+        pass # 通过
+    # 3. 如果 API_KEY 为空或未设置，根据你的需求决定是否放行（通常不建议放行，这里默认拦截）
+    else:
         raise HTTPException(401, 'api key 错误')
 
     models = MODELS.split(',')
@@ -77,7 +89,7 @@ async def list_models(
     for model_id in models:
         model_list.append(
             Model(
-                id=model_id,  # 使用model name作为对外的id
+                id=model_id, 
                 object="model",
                 created=int(time.time()),
                 owned_by='',
