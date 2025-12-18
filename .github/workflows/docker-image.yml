@@ -5,9 +5,12 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
+  workflow_dispatch:
+  
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +29,9 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          buildkitd-flags: --debug
+
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
 
       - name: Extract metadata
         id: meta
@@ -47,6 +51,5 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.meta.outputs.tags || 'ghcr.io/${{ github.repository_owner }}/cursorweb2api:latest' }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          builder: ${{ steps.buildx.outputs.name }}
